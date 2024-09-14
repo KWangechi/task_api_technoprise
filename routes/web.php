@@ -2,6 +2,8 @@
 
 /** @var \Laravel\Lumen\Routing\Router $router */
 
+use App\Http\Controllers\TaskController;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -13,10 +15,15 @@
 |
 */
 
-$router->get('/', function () use ($router) {
-    return $router->app->version();
+// $router->get('/', function () use ($router) {
+//     return $router->app->version();
+// });
+
+// set an 'api' prefix, for the routes
+$router->group(['prefix' => 'api'], function () use ($router) {
+    $router->get("/tasks", ['uses' => 'TaskController@index']);
+    $router->post("/tasks", ['uses' => 'TaskController@store']);
+    $router->get("/tasks/{id}", ['uses' => 'TaskController@show']);
+    $router->put("/tasks/{id}", ['uses' => 'TaskController@index']);
+    $router->delete("/tasks/{id}", ['uses' => 'TaskController@destroy']);
 });
-
-
-
-

@@ -11,15 +11,13 @@ class Controller extends BaseController
 {
     protected function setErrorMessage($message, $errors = null, $status_code = 422)
     {
-        if (is_string($errors) && isset($errors)) {
-            return response()->json([
-                'status' => [
-                    $status_code,
-                    $message
-                ],
-                'data' => []
-            ], $status_code);
-        }
+        return response()->json([
+            'message' => $message,
+            'status' => [
+                'code' => $status_code,
+                'errors' => $errors
+            ],
+        ], $status_code);
     }
 
     protected function setSuccessMessage($message, $data = null, $status_code = 200)
@@ -32,5 +30,4 @@ class Controller extends BaseController
             'data' => $data
         ], $status_code);
     }
-
 }

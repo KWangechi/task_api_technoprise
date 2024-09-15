@@ -4,14 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Task;
 use Illuminate\Http\Request;
-use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\HttpFoundation\Response;
-
-// use Laravel\Lumen\Routing\Controller as BaseController;
 
 
 class TaskController extends Controller
 {
+
+    public function __construct() {}
+
+
 
     public function index()
     {
@@ -22,14 +24,16 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'title' => 'required|unique|string',
-                'description' => 'required',
-                'due_date' => 'required|datetime',
-                'status' => 'required|default:pending'
-            ]);
+        // dd($request->all());
 
+        try {
+            $task = new Task();
+            $validationInput = Validator::make($request->all(), $task->rules());
+
+
+            if ($validationInput->fails()) {
+                return $this->setErrorMessage('Validation Error', $validationInput->errors(), Response::HTTP_BAD_REQUEST);
+            }
 
             $task = Task::create([
                 'title' => $request->title,
@@ -37,8 +41,6 @@ class TaskController extends Controller
                 'due_date' => $request->due_date,
                 'status' => $request->status
             ]);
-
-            // dd($task);
 
             if (!$task) {
                 return $this->setErrorMessage('Error', 'Error while creating a task', Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -50,11 +52,48 @@ class TaskController extends Controller
         }
     }
 
-    public function show($id) {}
+    public function show($id)
+    {
 
-    public function update($id) {}
+        $task = Task::find($id);
 
-    public function destroy($id) {}
+        if (!$task) {
+            return $this->setErrorMessage('Error', 'Task not found', Response::HTTP_NOT_FOUND);
+        } else {
+            return $this->setSuccessMessage('Task retrieved successfully!', $task, Response::HTTP_OK);
+        }
+    }
+
+    public function update($id)
+    {
+        try {
+            $request = request();
+            $task = Task::find($id);
+
+            if (!$task) {
+                return $this->setErrorMessage('Error', 'Task not found', Response::HTTP_NOT_FOUND);
+            }
+
+            $task->update($request->all());
+
+            return $this->setSuccessMessage('Task updated successfully!', $task, Response::HTTP_OK);
+        } catch (\Throwable $th) {
+            return $this->setErrorMessage($th->getMessage(), $th, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+    }
+
+    public function destroy($id)
+    {
+        $task = Task::find($id);
+
+        if (!$task) {
+            return $this->setErrorMessage('Error', 'Task not found', Response::HTTP_NOT_FOUND);
+        }
+
+        $task->delete();
+
+        return $this->setSuccessMessage('Task deleted successfully!', null, Response::HTTP_NO_CONTENT);
+    }
 
 
     public function complete($id) {}

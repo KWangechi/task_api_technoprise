@@ -13,18 +13,21 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $table = "tasks";
+    protected $fillable = ['title', 'description', 'status', 'due_date'];
 
-    // protected $fillable = ['title', 'description', 'status', 'due_date'];
-    protected $guarded = [];
+    const TASK_STATUS = [
+        'pending' => 'Pending',
+        'completed' => 'Completed',
+        'in_progress' => 'In Progress',
+    ];
 
     public function rules()
     {
         return [
-            'title' => 'required|string|unique',
-            'description' => 'string',
-            'due_date' => 'datetime',
-           'status' => 'in:pending,completed,cancelled'
+            'title' => 'required|string|unique:tasks',
+            'description' => 'string|required',
+            'due_date' => 'required|date',
+            'status' => 'required|in:Pending,Completed,In Progress'
         ];
     }
 }

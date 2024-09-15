@@ -24,7 +24,6 @@ class TaskController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
 
         try {
             $task = new Task();
@@ -55,6 +54,7 @@ class TaskController extends Controller
     public function show($id)
     {
 
+        // dd('Get 1 task');
         $task = Task::find($id);
 
         if (!$task) {
@@ -92,15 +92,39 @@ class TaskController extends Controller
 
         $task->delete();
 
-        return $this->setSuccessMessage('Task deleted successfully!', null, Response::HTTP_NO_CONTENT);
+        return $this->setSuccessMessage('Task deleted successfully!', [], Response::HTTP_OK);
     }
 
 
-    public function complete($id) {}
+    public function filterByStatus(Request $request)
+    {
+        // $status = request('status');
+        $tasks = Task::where('status', $request->status)->paginate(10);
 
-    public function incomplete($id) {}
+        if (!$tasks) {
+            return $this->setErrorMessage('Error', 'No tasks found with status ' . $request->status, Response::HTTP_NOT_FOUND);
+        } else {
+            return $this->setSuccessMessage('Tasks retrieved successfully!', $tasks, Response::HTTP_OK);
+        }
+    }
 
-    public function dueToday($id) {}
+    /**
+     * Search for exact match of the task,
+     */
+    public function searchTask(Request $request)
 
-    public function dueThisWeek($id) {}
+    {
+
+        $tasks = Task::where('title', '=', $request->query('search'))
+            ->orWhere('description', '=', $request->query('search'))
+            ->paginate(10);
+
+        // dd($tasks);
+
+        if (!$tasks) {
+            return $this->setErrorMessage('Error', 'No tasks found with title ' . $request->query('search'), Response::HTTP_NOT_FOUND);
+        } else {
+            return $this->setSuccessMessage('Tasks retrieved successfully!', $tasks, Response::HTTP_OK);
+        }
+    }
 }

@@ -15,11 +15,11 @@ class Task extends Model
 
     protected $fillable = ['title', 'description', 'status', 'due_date'];
 
-    const TASK_STATUS = [
-        'pending' => 'Pending',
-        'completed' => 'Completed',
-        'in_progress' => 'In Progress',
-    ];
+    // const TASK_STATUS = [
+    //     'pending' => 'Pending',
+    //     'completed' => 'Completed',
+    //     'in_progress' => 'In Progress',
+    // ];
 
     public function rules()
     {

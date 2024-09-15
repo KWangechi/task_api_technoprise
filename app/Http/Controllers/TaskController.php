@@ -10,9 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TaskController extends Controller
 {
-
     public function __construct() {}
-
 
 
     public function index()
@@ -54,7 +52,6 @@ class TaskController extends Controller
     public function show($id)
     {
 
-        // dd('Get 1 task');
         $task = Task::find($id);
 
         if (!$task) {
@@ -98,7 +95,6 @@ class TaskController extends Controller
 
     public function filterByStatus(Request $request)
     {
-        // $status = request('status');
         $tasks = Task::where('status', $request->status)->paginate(10);
 
         if (!$tasks) {
@@ -112,14 +108,10 @@ class TaskController extends Controller
      * Search for exact match of the task,
      */
     public function searchTask(Request $request)
-
     {
-
         $tasks = Task::where('title', '=', $request->query('search'))
             ->orWhere('description', '=', $request->query('search'))
             ->paginate(10);
-
-        // dd($tasks);
 
         if (!$tasks) {
             return $this->setErrorMessage('Error', 'No tasks found with title ' . $request->query('search'), Response::HTTP_NOT_FOUND);

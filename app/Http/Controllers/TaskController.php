@@ -51,8 +51,8 @@ class TaskController extends Controller
 
     public function show($id)
     {
-
         $task = Task::find($id);
+
 
         if (!$task) {
             return $this->setErrorMessage('Error', 'Task not found', Response::HTTP_NOT_FOUND);
@@ -97,10 +97,12 @@ class TaskController extends Controller
     {
         $tasks = Task::where('status', $request->status)->paginate(10);
 
+        // dd($tasks);
+
         if (!$tasks) {
             return $this->setErrorMessage('Error', 'No tasks found with status ' . $request->status, Response::HTTP_NOT_FOUND);
         } else {
-            return $this->setSuccessMessage('Tasks retrieved successfully!', $tasks, Response::HTTP_OK);
+            return $this->setSuccessMessage('Tasks By Filter Found!', $tasks, Response::HTTP_OK);
         }
     }
 
@@ -109,6 +111,8 @@ class TaskController extends Controller
      */
     public function searchTask(Request $request)
     {
+
+        // dd($request);
         $tasks = Task::where('title', '=', $request->query('search'))
             ->orWhere('description', '=', $request->query('search'))
             ->paginate(10);
@@ -116,7 +120,7 @@ class TaskController extends Controller
         if (!$tasks) {
             return $this->setErrorMessage('Error', 'No tasks found with title ' . $request->query('search'), Response::HTTP_NOT_FOUND);
         } else {
-            return $this->setSuccessMessage('Tasks retrieved successfully!', $tasks, Response::HTTP_OK);
+            return $this->setSuccessMessage('Search Results Found!', $tasks, Response::HTTP_OK);
         }
     }
 }
